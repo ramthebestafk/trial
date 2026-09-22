@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Send a Message</title>
+  <style>
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: #0f172a; color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+    .card { background: #1e293b; border: 1px solid #334155; padding: 32px; border-radius: 12px; width: 100%; max-width: 480px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+    h2 { margin-top: 0; color: #38bdf8; }
+    label { display: block; margin-top: 16px; margin-bottom: 6px; font-size: 14px; color: #94a3b8; }
+    input, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 15px; }
+    input:focus, textarea:focus { outline: none; border-color: #38bdf8; }
+    textarea { height: 120px; resize: vertical; }
+    button { width: 100%; margin-top: 24px; padding: 12px; background: #0284c7; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    button:hover { background: #0369a1; }
+    .status { margin-top: 16px; font-size: 14px; text-align: center; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>Send a Message</h2>
+  <p style="color: #94a3b8; font-size: 14px;">Type your message below to send it directly to the admin.</p>
+  
+  <label for="senderName">Your Name (Optional)</label>
+  <input type="text" id="senderName" placeholder="e.g., Alex or Anonymous">
+
+  <label for="messageText">Your Message *</label>
+  <textarea id="messageText" placeholder="Write what you want here..."></textarea>
+
+  <button id="submitBtn">Send Message</button>
+  <div id="statusMsg" class="status"></div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA9Wd5qG4WoqeTddqcEtUhNmozNVey-QAQ",
+    authDomain: "your-ideas-cf3aa.firebaseapp.com",
+    projectId: "your-ideas-cf3aa",
+    storageBucket: "your-ideas-cf3aa.firebasestorage.app",
+    messagingSenderId: "87169584274",
+    appId: "1:87169584274:web:c9de1e697ec52018c8aa4b",
+    measurementId: "G-V24TCX08LE"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  document.getElementById("submitBtn").addEventListener("click", async () => {
+    const name = document.getElementById("senderName").value.trim() || "Anonymous";
+    const message = document.getElementById("messageText").value.trim();
+    const status = document.getElementById("statusMsg");
+
+    if (!message) {
+      status.style.color = "#f87171";
+      status.innerText = "Please write a message before sending.";
+      return;
+    }
+
+    status.style.color = "#38bdf8";
+    status.innerText = "Sending...";
+
+    try {
+      await addDoc(collection(db, "submissions"), {
+        name: name,
+        message: message,
+        createdAt: serverTimestamp()
+      });
+
+      status.style.color = "#4ade80";
+      status.innerText = "Message sent successfully!";
+      document.getElementById("senderName").value = "";
+      document.getElementById("messageText").value = "";
+    } catch (error) {
+      console.error("Error sending message:", error);
+      status.style.color = "#f87171";
+      status.innerText = "Failed to send message. Make sure Firestore rules are set to public.";
+    }
+  });
+</script>
+</body>
+</html>

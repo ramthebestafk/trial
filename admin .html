@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <style>
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: #0f172a; color: #f8fafc; padding: 40px 20px; max-width: 800px; margin: 0 auto; }
+    h1 { color: #38bdf8; border-bottom: 2px solid #334155; padding-bottom: 12px; margin-bottom: 24px; }
+    .login-box { background: #1e293b; padding: 24px; border-radius: 12px; border: 1px solid #334155; max-width: 400px; margin: 60px auto; text-align: center; }
+    input[type="password"] { width: 100%; padding: 12px; margin: 16px 0; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #fff; text-align: center; font-size: 16px; }
+    button { padding: 12px 24px; background: #0284c7; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; }
+    .card { background: #1e293b; border: 1px solid #334155; padding: 20px; border-radius: 10px; margin-bottom: 16px; border-left: 4px solid #38bdf8; }
+    .card-header { display: flex; justify-content: space-between; font-size: 14px; color: #94a3b8; margin-bottom: 10px; }
+    .sender { font-weight: 600; color: #f3f4f6; }
+    .message { font-size: 16px; line-height: 1.5; color: #e2e8f0; white-space: pre-wrap; }
+    .time { font-size: 12px; color: #64748b; }
+  </style>
+</head>
+<body>
+
+<div id="authContainer" class="login-box">
+  <h3 style="margin-top:0;">Admin Authentication</h3>
+  <input type="password" id="passInput" placeholder="Enter Admin Password">
+  <button id="loginBtn">Access Submissions</button>
+  <p id="authErr" style="color: #f87171; font-size: 14px; display: none; margin-top: 12px;">Incorrect Password</p>
+</div>
+
+<div id="dashboard" style="display: none;">
+  <h1>Admin Message Inbox</h1>
+  <div id="messagesList">Loading submissions...</div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  // CHANGE YOUR ADMIN PASSWORD HERE
+  const ADMIN_PASSWORD = "admin";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA9Wd5qG4WoqeTddqcEtUhNmozNVey-QAQ",
+    authDomain: "your-ideas-cf3aa.firebaseapp.com",
+    projectId: "your-ideas-cf3aa",
+    storageBucket: "your-ideas-cf3aa.firebasestorage.app",
+    messagingSenderId: "87169584274",
+    appId: "1:87169584274:web:c9de1e697ec52018c8aa4b",
+    measurementId: "G-V24TCX08LE"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  document.getElementById("loginBtn").addEventListener("click", () => {
+    const inputPass = document.getElementById("passInput").value;
+    if (inputPass === ADMIN_PASSWORD) {
+      document.getElementById("authContainer").style.display = "none";
+      document.getElementById("dashboard").style.display = "block";
+      loadMessages();
+    } else {
+      document.getElementById("authErr").style.display = "block";
+    }
+  });
+
+  function loadMessages() {
+    const list = document.getElementById("messagesList");
+    const q = query(collection(db, "submissions"), orderBy("createdAt", "desc"));
+
+    onSnapshot(q, (snapshot) => {
+      list.innerHTML = "";
+      if (snapshot.empty) {
+        list.innerHTML = "<p style='color: #94a3b8;'>No messages received yet.</p>";
+        return;
+      }
+
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        const dateStr = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : "Just now";
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="card-header">
+            <span class="sender">From: ${data.name || 'Anonymous'}</span>
+            <span class="time">${dateStr}</span>
+          </div>
+          <div class="message">${data.message}</div>
+        `;
+        list.appendChild(card);
+      });
+    });
+  }
+</script>
+</body>
+</html>
