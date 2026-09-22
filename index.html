@@ -16,6 +16,8 @@
     button { width: 100%; margin-top: 24px; padding: 12px; background: #0284c7; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; }
     button:hover { background: #0369a1; }
     .status { margin-top: 16px; font-size: 14px; text-align: center; }
+    .admin-link { display: block; text-align: center; margin-top: 20px; color: #64748b; font-size: 13px; text-decoration: none; transition: 0.2s; }
+    .admin-link:hover { color: #38bdf8; text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -32,6 +34,9 @@
 
   <button id="submitBtn">Send Message</button>
   <div id="statusMsg" class="status"></div>
+
+  <!-- Admin Navigation Link -->
+  <a href="admin.html" id="adminLink" class="admin-link">Go to Admin Dashboard →</a>
 </div>
 
 <script type="module">
@@ -79,9 +84,9 @@
     } catch (error) {
       console.error("Error sending message:", error);
       status.style.color = "#f87171";
-      status.innerText = "Failed to send message. Make sure Firestore rules are set to public.";
+      status.innerText = "Failed to send message. Please try again.";
     }
   });
 </script>
 </body>
-</html>
+</html
