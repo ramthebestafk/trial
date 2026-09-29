@@ -3,45 +3,112 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Send a Message</title>
+  <title>Well Being Council Platform</title>
   <style>
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: #0f172a; color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-    .card { background: #1e293b; border: 1px solid #334155; padding: 32px; border-radius: 12px; width: 100%; max-width: 480px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+    .card { background: #1e293b; border: 1px solid #334155; padding: 32px; border-radius: 12px; width: 100%; max-width: 520px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
     h2 { margin-top: 0; color: #38bdf8; }
-    label { display: block; margin-top: 16px; margin-bottom: 6px; font-size: 14px; color: #94a3b8; }
-    input, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 15px; }
-    input:focus, textarea:focus { outline: none; border-color: #38bdf8; }
-    textarea { height: 120px; resize: vertical; }
-    button { width: 100%; margin-top: 24px; padding: 12px; background: #0284c7; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-    button:hover { background: #0369a1; }
-    .status { margin-top: 16px; font-size: 14px; text-align: center; }
-    .admin-link { display: block; text-align: center; margin-top: 20px; color: #64748b; font-size: 13px; text-decoration: none; transition: 0.2s; }
+    .tab-buttons { display: flex; gap: 8px; margin-bottom: 20px; }
+    .tab-btn { flex: 1; padding: 10px; background: #0f172a; border: 1px solid #334155; color: #94a3b8; border-radius: 6px; cursor: pointer; font-weight: 600; text-align: center; }
+    .tab-btn.active { background: #0284c7; color: white; border-color: #0284c7; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    label { display: block; margin-top: 14px; margin-bottom: 6px; font-size: 14px; color: #94a3b8; }
+    input, textarea, select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 15px; }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: #38bdf8; }
+    textarea { height: 100px; resize: vertical; }
+    button.submit-btn { width: 100%; margin-top: 20px; padding: 12px; background: #0284c7; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    button.submit-btn:hover { background: #0369a1; }
+    .status { margin-top: 14px; font-size: 14px; text-align: center; }
+    .admin-link { display: block; text-align: center; margin-top: 20px; color: #64748b; font-size: 13px; text-decoration: none; }
     .admin-link:hover { color: #38bdf8; text-decoration: underline; }
   </style>
 </head>
 <body>
 
 <div class="card">
-  <h2>Send a Message</h2>
-  <p style="color: #94a3b8; font-size: 14px;">Type your message below to send it directly to the admin.</p>
+  <h2>Well Being Council Hub</h2>
   
-  <label for="senderName">Your Name (Optional)</label>
-  <input type="text" id="senderName" placeholder="e.g., Alex or Anonymous">
+  <div class="tab-buttons">
+    <div class="tab-btn active" onclick="switchTab('ideaTab', this)">Send an Idea</div>
+    <div class="tab-btn" onclick="switchTab('apptTab', this)">Book 1 on 1</div>
+  </div>
 
-  <label for="messageText">Your Message *</label>
-  <textarea id="messageText" placeholder="Write what you want here..."></textarea>
+  <!-- IDEA SUBMISSION TAB -->
+  <div id="ideaTab" class="tab-content active">
+    <p style="color: #94a3b8; font-size: 14px; line-height: 1.5;">
+      The Well Being Council is here to support student wellness and school environment. Share your thoughts, suggestions, or feedback below.
+    </p>
+    <label for="senderName">Your Name (Optional)</label>
+    <input type="text" id="senderName" placeholder="e.g., Alex or Anonymous">
 
-  <button id="submitBtn">Send Message</button>
-  <div id="statusMsg" class="status"></div>
+    <label for="senderClass">Your Class / Grade (Optional)</label>
+    <input type="text" id="senderClass" placeholder="e.g., Grade 11 or Room 3B">
 
-  <!-- Admin Navigation Link -->
-  <a href="admin.html" id="adminLink" class="admin-link">Go to Admin Dashboard →</a>
+    <label for="messageText">Your Message or Idea *</label>
+    <textarea id="messageText" placeholder="Write what you want here..."></textarea>
+
+    <button class="submit-btn" id="submitIdeaBtn">Send Idea</button>
+    <div id="ideaStatus" class="status"></div>
+  </div>
+
+  <!-- APPOINTMENT BOOKING TAB -->
+  <div id="apptTab" class="tab-content">
+    <p style="color: #94a3b8; font-size: 14px; line-height: 1.5;">
+      Schedule a 45 minute session to discuss student wellbeing initiatives, ideas, or personal support directly.
+    </p>
+
+    <label for="apptName">Your Name *</label>
+    <input type="text" id="apptName" placeholder="Enter your full name">
+
+    <label for="apptClass">Your Class / Grade *</label>
+    <input type="text" id="apptClass" placeholder="e.g., Grade 11 or Room 3B">
+
+    <label for="apptDate">Preferred Date *</label>
+    <input type="date" id="apptDate">
+
+    <label for="apptSlot">Select Time Slot (45 mins) *</label>
+    <select id="apptSlot">
+      <option value="">Choose a time slot</option>
+      <option value="08:15 AM - 09:00 AM">8:15 AM to 9:00 AM</option>
+      <option value="09:00 AM - 09:45 AM">9:00 AM to 9:45 AM</option>
+      <option value="09:45 AM - 10:30 AM">9:45 AM to 10:30 AM</option>
+      <option value="10:30 AM - 11:15 AM">10:30 AM to 11:15 AM</option>
+      <option value="11:15 AM - 12:00 PM">11:15 AM to 12:00 PM</option>
+      <option value="12:00 PM - 12:45 PM">12:00 PM to 12:45 PM</option>
+    </select>
+
+    <label for="apptTopic">Topic / Notes (Optional)</label>
+    <input type="text" id="apptTopic" placeholder="Briefly what is this about?">
+
+    <button class="submit-btn" id="submitApptBtn">Confirm Appointment</button>
+    <div id="apptStatus" class="status"></div>
+  </div>
+
+  <a href="admin.html" class="admin-link">Go to Admin Dashboard →</a>
 </div>
+
+<script>
+  function switchTab(tabId, element) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    element.classList.add('active');
+  }
+</script>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { 
+    getFirestore, 
+    collection, 
+    addDoc, 
+    query, 
+    where, 
+    getDocs, 
+    serverTimestamp 
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyA9Wd5qG4WoqeTddqcEtUhNmozNVey-QAQ",
@@ -56,10 +123,12 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  document.getElementById("submitBtn").addEventListener("click", async () => {
+  // Submit Idea Logic
+  document.getElementById("submitIdeaBtn").addEventListener("click", async () => {
     const name = document.getElementById("senderName").value.trim() || "Anonymous";
+    const studentClass = document.getElementById("senderClass").value.trim() || "Not specified";
     const message = document.getElementById("messageText").value.trim();
-    const status = document.getElementById("statusMsg");
+    const status = document.getElementById("ideaStatus");
 
     if (!message) {
       status.style.color = "#f87171";
@@ -73,20 +142,73 @@
     try {
       await addDoc(collection(db, "submissions"), {
         name: name,
+        studentClass: studentClass,
         message: message,
+        createdAt: serverTimestamp()
+      });
+      status.style.color = "#4ade80";
+      status.innerText = "Message sent successfully!";
+      document.getElementById("senderName").value = "";
+      document.getElementById("senderClass").value = "";
+      document.getElementById("messageText").value = "";
+    } catch (err) {
+      status.style.color = "#f87171";
+      status.innerText = "Failed to send message.";
+    }
+  });
+
+  // Submit Appointment Logic (with Double-Booking Prevention)
+  document.getElementById("submitApptBtn").addEventListener("click", async () => {
+    const name = document.getElementById("apptName").value.trim();
+    const studentClass = document.getElementById("apptClass").value.trim();
+    const date = document.getElementById("apptDate").value;
+    const slot = document.getElementById("apptSlot").value;
+    const topic = document.getElementById("apptTopic").value.trim() || "General Discussion";
+    const status = document.getElementById("apptStatus");
+
+    if (!name || !studentClass || !date || !slot) {
+      status.style.color = "#f87171";
+      status.innerText = "Please fill in your name, class, date, and time slot.";
+      return;
+    }
+
+    status.style.color = "#38bdf8";
+    status.innerText = "Checking slot availability...";
+
+    try {
+      const apptRef = collection(db, "appointments");
+      const checkQuery = query(apptRef, where("date", "==", date), where("slot", "==", slot));
+      const existingBookings = await getDocs(checkQuery);
+
+      if (!existingBookings.empty) {
+        status.style.color = "#f87171";
+        status.innerText = "This time slot is already booked for that date! Please select another time.";
+        return;
+      }
+
+      status.innerText = "Booking appointment...";
+      await addDoc(apptRef, {
+        name: name,
+        studentClass: studentClass,
+        date: date,
+        slot: slot,
+        topic: topic,
         createdAt: serverTimestamp()
       });
 
       status.style.color = "#4ade80";
-      status.innerText = "Message sent successfully!";
-      document.getElementById("senderName").value = "";
-      document.getElementById("messageText").value = "";
-    } catch (error) {
-      console.error("Error sending message:", error);
+      status.innerText = "Appointment booked successfully!";
+      document.getElementById("apptName").value = "";
+      document.getElementById("apptClass").value = "";
+      document.getElementById("apptDate").value = "";
+      document.getElementById("apptSlot").value = "";
+      document.getElementById("apptTopic").value = "";
+    } catch (err) {
+      console.error("Error booking appointment:", err);
       status.style.color = "#f87171";
-      status.innerText = "Failed to send message. Please try again.";
+      status.innerText = "Failed to book appointment. Please try again.";
     }
   });
 </script>
 </body>
-</html
+</html>
