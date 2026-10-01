@@ -123,6 +123,43 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
+  const timeSlots = [
+    { value: "08:15 AM - 09:00 AM", label: "8:15 AM to 9:00 AM" },
+    { value: "09:00 AM - 09:45 AM", label: "9:00 AM to 9:45 AM" },
+    { value: "09:45 AM - 10:30 AM", label: "9:45 AM to 10:30 AM" },
+    { value: "10:30 AM - 11:15 AM", label: "10:30 AM to 11:15 AM" },
+    { value: "11:15 AM - 12:00 PM", label: "11:15 AM to 12:00 PM" },
+    { value: "12:00 PM - 12:45 PM", label: "12:00 PM to 12:45 PM" }
+  ];
+
+  // Dynamic Slot Disabling on Date Change
+  document.getElementById("apptDate").addEventListener("change", async (e) => {
+    const date = e.target.value;
+    const slotSelect = document.getElementById("apptSlot");
+
+    slotSelect.innerHTML = '<option value="">Choose a time slot</option>';
+
+    let bookedSlots = [];
+    if (date) {
+      try {
+        const q = query(collection(db, "appointments"), where("date", "==", date));
+        const snap = await getDocs(q);
+        bookedSlots = snap.docs.map(doc => doc.data().slot);
+      } catch (err) {
+        console.error("Error fetching booked slots:", err);
+      }
+    }
+
+    timeSlots.forEach(slot => {
+      const isBooked = bookedSlots.includes(slot.value);
+      const opt = document.createElement("option");
+      opt.value = slot.value;
+      opt.textContent = isBooked ? `${slot.label} (Already Booked)` : slot.label;
+      opt.disabled = isBooked;
+      slotSelect.appendChild(opt);
+    });
+  });
+
   // Submit Idea Logic
   document.getElementById("submitIdeaBtn").addEventListener("click", async () => {
     const name = document.getElementById("senderName").value.trim() || "Anonymous";
@@ -203,6 +240,9 @@
       document.getElementById("apptDate").value = "";
       document.getElementById("apptSlot").value = "";
       document.getElementById("apptTopic").value = "";
+
+      // Refresh slot list
+      document.getElementById("apptDate").dispatchEvent(new Event("change"));
     } catch (err) {
       console.error("Error booking appointment:", err);
       status.style.color = "#f87171";
